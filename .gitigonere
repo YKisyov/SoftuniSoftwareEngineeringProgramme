@@ -1,5 +1,6 @@
 #git ignore the inteliJ's .idea folder;
 .idea*
+.idea/
 # Compiled class file
 *.class
 
