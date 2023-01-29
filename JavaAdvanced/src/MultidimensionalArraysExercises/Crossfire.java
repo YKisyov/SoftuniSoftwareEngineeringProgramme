@@ -70,23 +70,36 @@ public class Crossfire {
             /*All "destroyed" cells are now marked with an integer bigger than any of the elements that are still in game
             in order to "update" the battlefield we will left shift all element by sorting each row;*/
 
-            //Arrays.sort(currentRowToBeShiftedToTheLeft);
-            //battleField[row] = currentRowToBeShiftedToTheLeft;
+            Arrays.sort(currentRowToBeShiftedToTheLeft);
+            battleField[row] = currentRowToBeShiftedToTheLeft;
         }
 
         //removing any rows whos' element might be marked as DESTROYED_CELL_FLAG by sorting all columns;
         //printOutCurrentMatrixState(battleField);
-        for (int col = 0; col < battleField[0].length; col++) {
-            //TODO
-            int[] extractedCol = getColumn(battleField, col);
-            Arrays.sort(extractedCol);
-            for (int i = 0; i < battleField.length; i++) {
-                //Overwrite the col-column
-                battleField[i][col] = extractedCol[i];
+
+        int[] elementsOfFristColumn = getColumn(battleField, 0);
+
+        boolean doesEmptyRowExist = false;
+        for (int i = 0; i < elementsOfFristColumn.length; i++) {
+            if (elementsOfFristColumn[0] == DESTROYED_CELL_FLAG){
+                doesEmptyRowExist = true;
+                break;
             }
         }
-        //todo mask with comments if this horizontal collapse works;
-        //printOutCurrentMatrixState(battleField);
+        if(doesEmptyRowExist){
+            for (int col = 0; col < battleField[0].length; col++) {
+                //TODO
+                int[] extractedCol = getColumn(battleField, col);
+                Arrays.sort(extractedCol);
+                for (int i = 0; i < battleField.length; i++) {
+                    //Overwrite the col-column
+                    battleField[i][col] = extractedCol[i];
+                }
+            }
+            //todo mask with comments if this horizontal collapse works;
+            //printOutCurrentMatrixState(battleField);
+        }
+
     }
 
     public static int[] getColumn(int[][] array, int columnIndex) {
