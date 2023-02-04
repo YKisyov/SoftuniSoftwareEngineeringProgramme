@@ -44,14 +44,14 @@ public class RadioactiveMutantVampireBunnies {
 
                     didPlayerWin = true;
                     //set previews turn (playerPosition var) to display "." in the lair matrix;
-                    if (lair[playerPosition[0]][playerPosition[1]] != BUNNY_FLAG) {
-                        lair[playerPosition[0]][playerPosition[1]] = '.';
-                    }
+                    erasePlayerGhostingPositionIfNecessary(BUNNY_FLAG, lair, playerPosition);
                 } else {
                     //players' NewPosition is valid = player is still in the lair
                     if (isThereBunnyAt(newPlayerPosition, lair, BUNNY_FLAG)) {
                         //there is or already there was a bunny in the player's new position, so the player dies;
                         isPlayerAlive = false;
+                        //set previews turn (playerPosition var) to display "." in the lair matrix;
+                        erasePlayerGhostingPositionIfNecessary(BUNNY_FLAG, lair, playerPosition);
                     } else {
                         //update old's player position with . and place PLAYER_FLAG on the newPlayerPossition
                         redrawPlayer(playerPosition, newPlayerPosition, lair, PLAYER_FLAG, BUNNY_FLAG);
@@ -66,6 +66,12 @@ public class RadioactiveMutantVampireBunnies {
         } else {
             printOutLair(lair);
             System.out.printf("dead: %d %d%s", playerPosition[0], playerPosition[1], System.lineSeparator());
+        }
+    }
+
+    private static void erasePlayerGhostingPositionIfNecessary(char BUNNY_FLAG, char[][] lair, int[] playerPosition) {
+        if (lair[playerPosition[0]][playerPosition[1]] != BUNNY_FLAG) {
+            lair[playerPosition[0]][playerPosition[1]] = '.';
         }
     }
 
@@ -120,9 +126,7 @@ public class RadioactiveMutantVampireBunnies {
     }
 
     private static void redrawPlayer(int[] playersPosition, int[] newPlayerPosition, char[][] lair, char PLAYER_FLAG, char BUNNY_FLAG) {
-        if (lair[playersPosition[0]][playersPosition[1]] != BUNNY_FLAG) {
-            lair[playersPosition[0]][playersPosition[1]] = '.';
-        }
+        erasePlayerGhostingPositionIfNecessary(BUNNY_FLAG, lair, playersPosition);
         lair[newPlayerPosition[0]][newPlayerPosition[1]] = PLAYER_FLAG;
     }
 
@@ -151,7 +155,7 @@ public class RadioactiveMutantVampireBunnies {
     }
 
     static boolean isPlayerOutOfLair(int[] newPlayerPosition, int ROWS, int COLS) {
-        //Check if the newPosition is outta the lair, if so the player is winner and further actions has to taken
+        //Check if the newPosition is out of the lair, if so the player is winner and further actions has to taken
         return (newPlayerPosition[0] < 0 || newPlayerPosition[0] >= ROWS)
                 || (newPlayerPosition[1] < 0 || newPlayerPosition[1] >= COLS);
     }
