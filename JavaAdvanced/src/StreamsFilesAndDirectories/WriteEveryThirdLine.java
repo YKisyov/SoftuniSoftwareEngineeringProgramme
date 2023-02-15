@@ -9,10 +9,17 @@ public class WriteEveryThirdLine {
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
         PrintWriter printWriter = new PrintWriter(new FileWriter(outPutFilePath));
-            int lineCounter = 1;
-            printWriter.println(bufferedReader.readLine());
-            while (bufferedReader.)
+        int count = 0;
 
+        String currentLine = "";
+        do {
+            currentLine = bufferedReader.readLine();
+            count++;
+            if (count % 3 == 0) {
+                System.out.println(currentLine);
+                printWriter.println(currentLine);
+            }
+        } while (currentLine != null);
 
         bufferedReader.close();
         printWriter.close();
