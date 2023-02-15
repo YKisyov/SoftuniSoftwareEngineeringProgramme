@@ -1,3 +1,5 @@
+package StreamsFilesAndDirectoriesExercise;
+
 import java.io.*;
 
 public class SumLine {
