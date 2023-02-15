@@ -3,65 +3,92 @@ package ExamPreps;
 import java.util.Scanner;
 
 public class NavyBattle {
+    private static int matrixSize;
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         boolean isSubmarineSank = false;
         char BATTLE_CRUISER_FLAG = 'C';
-        char NAVAL_MANE_FLAG = '*';
+        char NAVAL_MINE_FLAG = '*';
         final int TOTAL_BATTLE_CRUISERS_WHO_HAS_TO_BE_DESTROYED_TO_ACCOMPLISH_MISSION = 3;
-        final int MAX_HIT_COUNT_THAT_WILL_SANK_THE_SUBMARINE = 3;
+        final int MAX_HIT_COUNT_THAT_WILL_SINK_THE_SUBMARINE = 3;
         int destroyedBattleCruisers = 0;
         int hitsByNavalMines = 0;
-        int submarineYPosition = 0;
-        int submarineXPosition = 0;
+        int submarineRowPosition = 0;
+        int submarineColPosition = 0;
 
 
-        int seaSize = Integer.parseInt(scan.nextLine());
-        char[][] sea = new char[seaSize][seaSize];
-        for (int i = 0; i < seaSize; i++) {
+        matrixSize = Integer.parseInt(scan.nextLine());
+        char[][] sea = new char[matrixSize][matrixSize];
+        for (int i = 0; i < matrixSize; i++) {
             String lineInput = scan.nextLine();
-            for (int j = 0; j < seaSize; j++) {
+            for (int j = 0; j < matrixSize; j++) {
                 sea[i][j] = lineInput.charAt(j);
                 if (sea[i][j] == 'S') {
-                    submarineYPosition = i;
-                    submarineXPosition = j;
+                    submarineRowPosition = i;
+                    submarineColPosition = j;
                 }
             }
         }
 
-        do {
-            String command = scan.nextLine();
-            int[] newXYPosition = calculateNewPosition(command, submarineYPosition, submarineXPosition);
-            int newY = newXYPosition[0];
-            int newX = newXYPosition[1];
-            if (sea[newY][newX] == BATTLE_CRUISER_FLAG) {
-                eraseSubmarineOldFlag(sea, submarineYPosition, submarineXPosition);
-                markSubmarineNewFlag(sea, newY, newX);
-                destroyedBattleCruisers++;
-                submarineYPosition = newY;
-                submarineXPosition = newX;
-            } else {
-                if (sea[newY][newX] == NAVAL_MANE_FLAG) {
-                    hitsByNavalMines++;
-                    if (hitsByNavalMines >= MAX_HIT_COUNT_THAT_WILL_SANK_THE_SUBMARINE) {
-                        isSubmarineSank = true;
-                        printFinalGameScore(isSubmarineSank, newY, newX);
+        String command = scan.nextLine();
+        int newRow = -1, newCol = -1;
+
+        while (destroyedBattleCruisers < TOTAL_BATTLE_CRUISERS_WHO_HAS_TO_BE_DESTROYED_TO_ACCOMPLISH_MISSION
+                && !isSubmarineSank) {
+
+
+            int[] newRowColPosition = calculateNewPosition(command, submarineRowPosition, submarineColPosition);
+            newRow = newRowColPosition[0];
+            newCol = newRowColPosition[1];
+            if (checkPositionValidity(newRowColPosition)) {
+
+                if (sea[newRow][newCol] == BATTLE_CRUISER_FLAG) {
+                    eraseSubmarineOldFlag(sea, submarineRowPosition, submarineColPosition);
+                    markSubmarineNewFlag(sea, newRow, newCol);
+                    destroyedBattleCruisers++;
+                    submarineRowPosition = newRow;
+                    submarineColPosition = newCol;
+                } else {
+                    if (sea[newRow][newCol] == NAVAL_MINE_FLAG) {
+                        hitsByNavalMines++;
+                        if (hitsByNavalMines >= MAX_HIT_COUNT_THAT_WILL_SINK_THE_SUBMARINE) {
+                            isSubmarineSank = true;
+                        }
+                        eraseSubmarineOldFlag(sea, submarineRowPosition, submarineColPosition);
+                        markSubmarineNewFlag(sea, newRow, newCol);
+                        submarineRowPosition = newRow;
+                        submarineColPosition = newCol;
                     }
-                    eraseSubmarineOldFlag(sea, submarineYPosition, submarineXPosition);
-                    markSubmarineNewFlag(sea, newY, newX);
-                    submarineYPosition = newY;
-                    submarineXPosition = newX;
                 }
+                if (sea[newRow][newCol] == '-') {
+                    eraseSubmarineOldFlag(sea, submarineRowPosition, submarineColPosition);
+                    markSubmarineNewFlag(sea, newRow, newCol);
+                    submarineRowPosition = newRow;
+                    submarineColPosition = newCol;
+                }
+
+              /*        todo remove this
+                System.out.println("==================");
+                printSea(sea);
+                System.out.println("=================");
+               */
+            } else {
+                System.out.println("Submarine outta range");
+                break;
             }
-            if (sea[newX][newY] == '-') {
-                eraseSubmarineOldFlag(sea, submarineYPosition, submarineXPosition);
-                markSubmarineNewFlag(sea, newY, newX);
-                submarineYPosition = newY;
-                submarineXPosition = newX;
-            }
-        } while (destroyedBattleCruisers < TOTAL_BATTLE_CRUISERS_WHO_HAS_TO_BE_DESTROYED_TO_ACCOMPLISH_MISSION
-                && !isSubmarineSank);
+            command = scan.nextLine();
+        }
+
+        printFinalGameScore(isSubmarineSank, newRow, newCol);
         printSea(sea);
+    }
+
+    private static boolean checkPositionValidity(int[] newXYPosition) {
+        int x = newXYPosition[0];
+        int y = newXYPosition[1];
+        return (x >= 0 && x < matrixSize)
+                && (y >= 0 && y < matrixSize);
     }
 
     private static void printSea(char[][] sea) {
@@ -73,40 +100,40 @@ public class NavyBattle {
         }
     }
 
-    private static void printFinalGameScore(boolean isSubmarineSank, int newY, int newX) {
+    private static void printFinalGameScore(boolean isSubmarineSank, int newX, int newY) {
         if (isSubmarineSank) {
-            System.out.printf("Mission failed, U-9 disappeared! Last known coordinates [%d, %d]!\n", newY, newX);
+            System.out.printf("Mission failed, U-9 disappeared! Last known coordinates [%d, %d]!\n", newX, newY);
         } else {
-            System.out.printf("Mission accomplished, U-9 has destroyed all battle cruisers of the enemy!");
+            System.out.printf("Mission accomplished, U-9 has destroyed all battle cruisers of the enemy!\n");
         }
     }
 
 
-    private static void markSubmarineNewFlag(char[][] sea, int newY, int newX) {
-        sea[newY][newX] = 'S';
+    private static void markSubmarineNewFlag(char[][] sea, int newRow, int newCol) {
+        sea[newRow][newCol] = 'S';
     }
 
-    private static void eraseSubmarineOldFlag(char[][] sea, int submarineYPosition, int submarineXPosition) {
-        sea[submarineYPosition][submarineXPosition] = '-';
+    private static void eraseSubmarineOldFlag(char[][] sea, int submarineRowPosition, int submarineColPosition) {
+        sea[submarineRowPosition][submarineColPosition] = '-';
     }
 
-    static int[] calculateNewPosition(String command, int currentPositionY, int currentPositionX) {
-        int y = currentPositionY;
-        int x = currentPositionX;
+    static int[] calculateNewPosition(String command, int currentRowPosition, int currentColPosition) {
+        int row = currentRowPosition;
+        int col = currentColPosition;
         switch (command) {
             case "up":
-                y++;
+                row = row - 1;
                 break;
             case "down":
-                y--;
+                row = row + 1;
                 break;
             case "left":
-                x--;
+                col = col - 1;
                 break;
             case "right":
-                x++;
+                col = col + 1;
                 break;
         }
-        return new int[]{y, x};
+        return new int[]{row, col};
     }
 }
