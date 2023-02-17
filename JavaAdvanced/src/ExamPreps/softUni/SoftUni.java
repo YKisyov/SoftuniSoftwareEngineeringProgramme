@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SoftUni {
-    int capacity;
-    List<Student> data;
+    private int capacity;
+    private List<Student> data;
 
     public SoftUni(int capacity) {
         this.capacity = capacity;
