@@ -1,10 +1,9 @@
-// package softUni;
-package ExamPreps.softuniStudents.softUni;
+package ExamPreps.softUni;
 
 public class Student {
-    private String firstName;
-    private String lastName;
-    private String bestCourse;
+    String firstName;
+    String lastName;
+    String bestCourse;
 
     public Student(String firstName, String lastName, String bestCourse) {
         this.firstName = firstName;
@@ -14,8 +13,7 @@ public class Student {
 
     @Override
     public String toString() {
-        //Student: {firstName} {lastName}, Best Course = {bestCourse}
-        return String.format("Student: %s %s, Best Course - %s",
+        return String.format("Student: %s %s, Best Course = %s",
                 firstName, lastName, bestCourse);
     }
 

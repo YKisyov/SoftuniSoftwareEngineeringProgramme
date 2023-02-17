@@ -1,5 +1,5 @@
 // package softUni;
-package ExamPreps.softuniStudents.softUni;
+package ExamPreps.softUni;
 
 public class Main {
     public static void main(String[] args) {
